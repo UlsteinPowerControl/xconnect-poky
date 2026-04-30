@@ -411,6 +411,14 @@ class BootimgEFIPlugin(SourcePlugin):
                               % (os.path.join(kernel_dir, src_path),
                                  os.path.join(hdddir, dst_path))
                 exec_cmd(install_cmd)
+                if dst_path.endswith(".conf"):
+                    conf_path = os.path.join(hdddir, dst_path)
+                    with open(conf_path, "r", encoding="utf-8") as conf_file:
+                        conf = conf_file.read()
+                    if "ROOTDEV" in conf:
+                        conf = conf.replace("ROOTDEV", creator.rootdev)
+                        with open(conf_path, "w", encoding="utf-8") as conf_file:
+                            conf_file.write(conf)
 
         try:
             if source_params['loader'] == 'grub-efi':
